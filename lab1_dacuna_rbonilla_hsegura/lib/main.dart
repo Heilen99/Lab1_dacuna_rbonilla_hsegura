@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lab1_dacuna_rbonilla_hsegura/anime_service.dart';
-import 'characters_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:lab1_dacuna_rbonilla_hsegura/anime_service.dart';
 import 'package:lab1_dacuna_rbonilla_hsegura/models/anime_model.dart';
+
+import 'characters_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,15 +18,16 @@ class MyApp extends StatelessWidget {
       future: AnimeService().getAnimeList(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
           final genres = snapshot.data!;
+
           return MaterialApp(
             title: 'Anilist API',
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primarySwatch: Colors.teal,
             ),
             home: AnimeSelectionScreen(animeList: genres),
           );
@@ -53,27 +54,31 @@ class AnimeSelectionScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Seleccionar el Género'),
+        title: const Text('Seleccionar el Género'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ButtonBar(
-          alignment: MainAxisAlignment.center,
-          buttonMinWidth: 120,
-          buttonPadding: EdgeInsets.symmetric(horizontal: 8),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 8,
           children: genres.map((genre) {
-            return ElevatedButton(
-              onPressed: () {
-                selectedGenre = genre;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CharactersScreen(animeGenre: selectedGenre),
-                  ),
-                );
-              },
-              child: Text(genre),
+            return SizedBox(
+              width: 120,
+              child: ElevatedButton(
+                onPressed: () {
+                  selectedGenre = genre;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CharactersScreen(animeGenre: selectedGenre),
+                    ),
+                  );
+                },
+                child: Text(genre),
+              ),
             );
           }).toList(),
         ),
