@@ -43,7 +43,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Selected Genre: ${widget.animeGenre}',
+              'Género Seleccionado: ${widget.animeGenre}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),

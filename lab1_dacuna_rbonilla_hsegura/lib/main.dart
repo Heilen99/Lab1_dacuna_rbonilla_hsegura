@@ -12,13 +12,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Genres List',
+      debugShowCheckedModeBanner: false, // Quitar el banner de "debug"
+      title: 'ANIME',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.brown,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Genres List'),
+          title: Text('Lista de Géneros, seleccione el que desee ver'),
         ),
         body: FutureBuilder<List<String>>(
           future: animeService.getGenresList(),
@@ -62,14 +63,18 @@ class MyApp extends StatelessWidget {
                                 );
                               },
                               child: Card(
-                                color: Colors.blue, // Color de fondo
+                                color: Colors.brown[200], // Color de fondo
                                 child: Container(
                                   alignment:
                                       Alignment.center, // Centrar el texto
                                   child: Text(
                                     genre,
                                     style: TextStyle(
-                                      color: Colors.white, // Color del texto
+                                      color: Colors
+                                          .black, // Color del texto en negro
+                                      fontSize:
+                                          18, // Tamaño de la fuente del texto
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
