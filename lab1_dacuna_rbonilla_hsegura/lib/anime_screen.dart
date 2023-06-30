@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lab1_dacuna_rbonilla_hsegura/models/anime_model.dart';
-import 'anime_service.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:lab1_dacuna_rbonilla_hsegura/service/anime_service.dart';
+import 'package:lab1_dacuna_rbonilla_hsegura/service/personajes_service.dart';
+import 'personajes_screen.dart';
 
 class CharactersScreen extends StatefulWidget {
   final String animeGenre;
@@ -12,12 +14,21 @@ class CharactersScreen extends StatefulWidget {
 }
 
 class _CharactersScreenState extends State<CharactersScreen> {
-  late Future<List<AnimeModel>> _charactersFuture;
+  late Future<List<Map<String, dynamic>>> _charactersFuture;
 
   @override
   void initState() {
     super.initState();
-    _charactersFuture = AnimeService().getAnimeList();
+    _charactersFuture = AnimeService().getAnimeList(widget.animeGenre);
+  }
+
+  Future<void> _navigateToPersonajesScreen(int animeId) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PersonajesScreen(animeId: animeId),
+      ),
+    );
   }
 
   @override
@@ -37,25 +48,29 @@ class _CharactersScreenState extends State<CharactersScreen> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<AnimeModel>>(
+            child: FutureBuilder<List<Map<String, dynamic>>>(
               future: _charactersFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final allCharacters = snapshot.data!;
 
-                  // Filtrar los animes por el género especificado
-                  final filteredCharacters = allCharacters
-                      .where(
-                          (anime) => anime.genres.contains(widget.animeGenre))
-                      .toList();
-
                   return ListView.builder(
-                    itemCount: filteredCharacters.length,
+                    itemCount: allCharacters.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final character = filteredCharacters[index];
+                      final character = allCharacters[index];
+                      final coverImage =
+                          character['coverImage'] as Map<String, dynamic>?;
+                      final title = character['title'] as String?;
+                      final type = character['type'] as String?;
+                      final genres = character['genres'] as List<dynamic>?;
+                      final animeId = character['id'] as int?;
+
                       return ListTile(
+                        onTap: () {
+                          _navigateToPersonajesScreen(animeId!);
+                        },
                         leading: Image.network(
-                          '${character.bannerImage}',
+                          coverImage?['large'] as String,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -67,12 +82,12 @@ class _CharactersScreenState extends State<CharactersScreen> {
                             );
                           },
                         ),
-                        title: Text(character.title.english ?? 'Unknown Title'),
+                        title: Text(title ?? 'Unknown Title'),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Type: ${character.type}'),
-                            Text('Genres: ${character.genres.join(", ")}'),
+                            Text('Type: $type'),
+                            Text('Genres: ${genres?.join(", ") ?? ""}'),
                           ],
                         ),
                       );
