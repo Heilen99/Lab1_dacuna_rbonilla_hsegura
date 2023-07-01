@@ -43,7 +43,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Género Seleccionado: ${widget.animeGenre}',
+              'Selected Genre: ${widget.animeGenre}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
@@ -65,30 +65,58 @@ class _CharactersScreenState extends State<CharactersScreen> {
                       final genres = character['genres'] as List<dynamic>?;
                       final animeId = character['id'] as int?;
 
-                      return ListTile(
+                      return GestureDetector(
                         onTap: () {
                           _navigateToPersonajesScreen(animeId!);
                         },
-                        leading: Image.network(
-                          coverImage?['large'] as String,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 100,
-                              height: 100,
-                              color: Colors.white, // Mostrar imagen en blanco
-                            );
-                          },
-                        ),
-                        title: Text(title ?? 'Unknown Title'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Type: $type'),
-                            Text('Genres: ${genres?.join(", ") ?? ""}'),
-                          ],
+                        child: Card(
+                          elevation: 4.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Image.network(
+                                  coverImage?['large'] as String,
+                                  width: 120.0,
+                                  height: 160.0,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 120.0,
+                                      height: 160.0,
+                                      color: Colors.white,
+                                    );
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        title ?? 'Unknown Title',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 4.0),
+                                      Text('Type: $type'),
+                                      SizedBox(height: 4.0),
+                                      Text(
+                                          'Genres: ${genres?.join(", ") ?? ""}'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
